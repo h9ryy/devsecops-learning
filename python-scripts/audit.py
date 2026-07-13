@@ -17,7 +17,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-try:
+try:  
     sub_run = subprocess.run(
         ["git", "log", "-p"], cwd=args.repo, capture_output=True, text=True, timeout=3
     )
@@ -27,20 +27,22 @@ try:
 
     found_secrets = False
     pattern = re.compile(args.search, re.IGNORECASE)
-    if sub_run.returncode == 0:
-        sub_text = io.StringIO(sub_run.stdout)
-        for line in sub_text:
-            if line.startswith("+") or line.startswith("-"):
-                match = pattern.search(line)
-                if match:
-                    sys.stdout.write(f"[!]A vulnerability has been discovered: {line}")
-                    found_secrets = True
+    sub_text = io.StringIO(sub_run.stdout)
+    for line in sub_text:
+        if line.startswith("+++") or line.startswith("---"):
+            continue
+        
+        if line.startswith("+") or line.startswith("-"):
+            match = pattern.search(line)
+            if match:
+                sys.stdout.write(f"[!]A vulnerability has been discovered: {line}\n")
+                found_secrets = True
     if not found_secrets:
-        sys.stdout.write("No vulnerabilities found")
+        sys.stdout.write("No vulnerabilities found\n")
         sys.exit(0)
     else:
         sys.exit(1)
 
 except subprocess.TimeoutExpired:
-    sys.stderr.write("[-]Error: file response timeout")
+    sys.stderr.write("[-]Error: file response timeout\n")
     sys.exit(1)
