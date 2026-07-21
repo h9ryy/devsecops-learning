@@ -45,7 +45,6 @@ try:
             sys.exit(1)
         else:
             sys.exit(0)
-            
 except OSError as e:
     sys.stderr.write(f"Ошибка при работе с файлом: {e.strerror} (код {e.errno})\n")
     sys.exit(1)
