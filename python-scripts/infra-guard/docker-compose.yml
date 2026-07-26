@@ -1,0 +1,8 @@
+services:
+  scanner:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - ./config.yaml:/app/config.yaml
+    command: ["--config", "config.yaml"]
