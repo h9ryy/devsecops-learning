@@ -4,7 +4,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Open port scanner")
 parser.add_argument("-t", "--target", type=str, default="localhost", help="Target host to scan")
-parser.add_argument("-p", "--ports", type=str, default="3306,5432,22", help="Ports separated by commas")
+parser.add_argument("-p", "--ports", type=str, default="80,443", help="Ports separated by commas")
 args = parser.parse_args()
 
 ports = [int(port.strip()) for port in args.ports.split(",")]
