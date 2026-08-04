@@ -27,4 +27,7 @@ jobs:
 
       - name: Run Perimeter Scanner
         working-directory: ./python-scripts/infra-guard
+        env:
+          SSH_USERNAME: ${{ secrets.SSH_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PASS }}
         run: python scanner.py --config config.yaml
