@@ -28,3 +28,7 @@
 *   **Python:** Модули `requests`, `re`, `scapy`, `socket`, `paramiko`, `subprocess`, `argparse`, `json/csv/yaml`, `sys`, `os`, `time`, многопоточность.
 *   **Docker:** `Dockerfile`, `multi-stage`, `docker-compose.yml`.
 
+## 🛠 Предстоящие доработки (Technical Debt)
+
+- [ ] **Фикс логов в Infra-Guard CI/CD**: Настроить генерацию SSH-ключей на воркере GitHub Actions (`Configure SSH Local Access`), чтобы скрипт `scanner.py` мог успешно авторизоваться на `localhost`. Это нужно для полноценного теста функции аудита прав файла `/etc/myapp/config.yaml`.
+- [ ] **Очистить конфигурацию сети**: Убрать из файла `python-scripts/infra-guard/config.yaml` неработающие хосты, оставив только локальный адрес `127.0.0.1`. Это избавит логи пайплайна от 30+ лишних ошибок DNS `Name or service not known`.
