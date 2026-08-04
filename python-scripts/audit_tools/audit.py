@@ -19,7 +19,7 @@ args = parser.parse_args()
 
 try:  
     sub_run = subprocess.run(
-        ["git", "log", "-p"], cwd=args.repo, capture_output=True, text=True, timeout=3
+        ["git", "log", "-1", "-p"], cwd=args.repo, capture_output=True, text=True, timeout=3
     )
     if sub_run.returncode != 0:
         sys.stderr.write(sub_run.stderr)
