@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
     paths: 
-      - ./python-scripts/audit_tools/**
+      - 'python-scripts/audit_tools/**'
       - '.github/workflows/security_audit.yml'
 
 jobs:
