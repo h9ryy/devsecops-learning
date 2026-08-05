@@ -29,11 +29,19 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+      - name: Configure and Start SSH Server
+        run: |
+          ssh-keygen -q -t rsa -N "" -f ~/.ssh/id_rsa
+          cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+          chmod 700 ~/.ssh
+          chmod 600 ~/.ssh/authorized_keys
+          sudo service ssh start
+
       - name: Run Perimeter Scanner
         working-directory: ./python-scripts/infra-guard
         env:
-          SSH_USERNAME: ${{ secrets.SSH_USER }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PASS }}
+          SSH_USERNAME: runner
+          SSH_PRIVATE_KEY: ""
         run: python scanner.py --config config.yaml
       
       - name: Assembly Docker
