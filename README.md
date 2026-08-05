@@ -9,7 +9,22 @@
 Каждая папка — это отдельный рабочий инструмент автоматизации:
 
 ### 1. [🛡️ `infra-guard`](./infra-guard/) - Сканер периметра и Compliance-аудит (Главный проект)
-*   **`scanner.py`** - Сканирует сеть на открытые порты в 15 потоков (`ThreadPoolExecutor` + `socket`), подключается к выжившим хостам по SSH (`paramiko`), проверяет права доступа на критические конфиги и ищет опасные процессы.
+*   **`scanner.py`** - Сканирует сеть на открытые порты in 15 потоков (`ThreadPoolExecutor` + `socket`), подключается к выжившим хостам по SSH (`paramiko`), проверяет права доступа на критические конфиги и ищет опасные процессы.
+
+#### 🚀 Инструкция по запуску
+Для запуска сканирования подготовьте файл конфигурации `config.yaml` и выполните команды:
+
+```bash
+# Установка необходимых зависимостей
+pip install -r python-scripts/infra-guard/requirements.txt
+
+# Запуск сканирования с указанием файла конфигурации
+python python-scripts/infra-guard/scanner.py --config python-scripts/infra-guard/config.yaml
+```
+
+**Переменные окружения для SSH-аудита:**
+* `SSH_USERNAME` — имя пользователя на целевом сервере (дефолт: `infra_guard_svc`).
+* `SSH_PRIVATE_KEY` — пароль или путь к ключу (дефолт: `secret_pass`).
 
 ### 2. [📦 `srv_backup`](./srv_backup/) - Утилита резервного копирования конфигураций
 *   **`srv_backup.py`** - Создает сжатые архивы `tar.gz` для указанной директории с использованием временных меток. Защищен от зависаний системы через ограничение таймаута выполнения.
@@ -27,8 +42,3 @@
 *   **Linux/Admin:** Управление процессами (`PID`, `kill -9`), права доступа (`chmod 640`, `chown`), аудит сети (`ss -ltupn`, `lsof`), файрволы (`ufw`), логи (`journalctl`).
 *   **Python:** Модули `requests`, `re`, `scapy`, `socket`, `paramiko`, `subprocess`, `argparse`, `json/csv/yaml`, `sys`, `os`, `time`, многопоточность.
 *   **Docker:** `Dockerfile`, `multi-stage`, `docker-compose.yml`.
-
-## 🛠 Предстоящие доработки (Technical Debt)
-
-- [ ] **Фикс логов в Infra-Guard CI/CD**: Настроить генерацию SSH-ключей на воркере GitHub Actions (`Configure SSH Local Access`), чтобы скрипт `scanner.py` мог успешно авторизоваться на `localhost`. Это нужно для полноценного теста функции аудита прав файла `/etc/myapp/config.yaml`.
-- [ ] **Очистить конфигурацию сети**: Убрать из файла `python-scripts/infra-guard/config.yaml` неработающие хосты, оставив только локальный адрес `127.0.0.1`. Это избавит логи пайплайна от 30+ лишних ошибок DNS `Name or service not known`.
