@@ -9,7 +9,7 @@ parser.add_argument("-d", "--dir", type=str, required=True, help="Path to config
 args = parser.parse_args()
 
 if not os.path.exists(args.dir):
-    sys.stderr.write("The script could not find the configuration folder.\n")
+    print("The script could not find the configuration folder.", file=sys.stderr)
     sys.exit(1)
 
 try:
@@ -18,11 +18,11 @@ try:
     
     sub_run = subprocess.run(command, capture_output=True, text=True, timeout=60)
     if sub_run.returncode == 0:
-        sys.stdout.write(f"[OK] Backup of '{args.dir}' created successfully as {backup_name}.\n")
+        print(f"[OK] Backup of '{args.dir}' created successfully as {backup_name}.")
         sys.exit(0)
     else:
-        sys.stderr.write(f"[ERROR] Tar command failed with exit code {sub_run.returncode}. Details: {sub_run.stderr}\n")
+        print(f"[ERROR] Tar command failed with exit code {sub_run.returncode}. Details: {sub_run.stderr}",file=sys.stderr,)
         sys.exit(1)
 except subprocess.TimeoutExpired:
-    sys.stderr.write(f"[ERROR] Backup process timed out after 60 seconds.\n")
+    print(f"[ERROR] Backup process timed out after 60 seconds.", file=sys.stderr)
     sys.exit(1)

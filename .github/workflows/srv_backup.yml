@@ -1,0 +1,54 @@
+name: Manual Infrastructure Backup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install Linter
+        run: pip install ruff
+
+      - name: Run Ruff Check & Format
+        working-directory: ./python-scripts/srv_backup
+        run: |
+          ruff check .
+          ruff format --check .
+
+  backup:
+    needs: lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Create Dummy Config Directory
+        working-directory: ./python-scripts/srv_backup
+        run: |
+          mkdir -p test_config
+          echo "data" > test_config/dummy.txt
+
+      - name: Run Configuration backup
+        working-directory: ./python-scripts/srv_backup
+        run: python srv_backup.py -d test_config
+
+      - name: srv-backup-file
+        uses: actions/upload-artifact@v4
+        with:
+          name: infrastructure-backup-archive
+          path: python-scripts/srv_backup/*.tar.gz
