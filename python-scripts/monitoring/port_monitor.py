@@ -1,8 +1,8 @@
 import argparse
-import sys
 import json
 import os
 import subprocess
+import sys
 
 parser = argparse.ArgumentParser(description="Utility for network port availability.")
 parser.add_argument("-f", "--file", type=str, required=True, help="Path to the source file with ports")
@@ -19,7 +19,7 @@ try:
         
         result = []
         for port in ports:
-            sub_run = subprocess.run(["nc", "-zv", "-w", "2", args.host, port], capture_output=True, text=True)
+            sub_run = subprocess.run(["nc", "-zv", "-w", "2", args.host, port], capture_output=True, text=True, check=False)
             
             status = "DOWN"
             raw_output = sub_run.stderr + sub_run.stdout

@@ -1,0 +1,40 @@
+name: Network Port Monitoring
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  run_scan:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [ "3.11" ]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Linter
+        run: pip install ruff
+
+      - name: Run Linter Check
+        working-directory: ./python-scripts/monitoring
+        run: |
+          ruff check .
+
+      - name: Run Port Monitor Script
+        working-directory: ./python-scripts/monitoring
+        continue-on-error: true
+        run: python port_monitor.py --host 127.0.0.1 --file ports.txt
+
+      - name: Assembly Docker
+        working-directory: ./python-scripts/monitoring
+        run: docker build -t monitoring:latest .
