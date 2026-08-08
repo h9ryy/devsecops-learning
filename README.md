@@ -40,8 +40,20 @@ python python-scripts/infra-guard/scanner.py --config python-scripts/infra-guard
 python python-scripts/srv_backup/srv_backup.py --dir python-scripts/srv_backup/test_config
 ```
 
-### 3. [📊 `monitoring`](./monitoring/) - Скрипты мониторинга инфраструктуры
-*   **`port_monitor.py`** - Считывает список портов из файла и проверяет их статус на целевом хосте с помощью системной утилиты `nc` (Netcat). Формирует структурированный JSON-отчет и возвращает exit-код `1`, если хотя бы один порт недоступен.
+### 3. [📊 `monitoring`](./python-scripts/monitoring/) — Мониторинг доступности портов инфраструктуры
+
+*   **`port_monitor.py`** — Считывает список портов из внешнего файла, проверяет их доступность с помощью системной утилиты `nc` (Netcat) через `subprocess` и формирует подробный JSON-отчет. Если хотя бы один критический порт падает (`DOWN`), скрипт возвращает ошибку, сигнализируя о сбое.
+
+#### 🚀 Инструкция по запуску
+Для запуска утилиты мониторинга подготовьте текстовый файл со списком портов и выполните команды из корня репозитория:
+
+```bash
+# 1. Скрипт использует встроенные библиотеки Python.
+# Убедитесь, что в вашей системе установлен Netcat (утилита nc).
+
+# 2. Запуск мониторинга с указанием целевого хоста и файла с портами
+python3 python-scripts/monitoring/port_monitor.py --host 127.0.0.1 --file python-scripts/monitoring/ports.txt
+```
 
 ### 4. [🔍 `audit_tools`](./python-scripts/audit_tools/) — Инструменты статического и сетевого аудита
 
