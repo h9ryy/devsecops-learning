@@ -1,0 +1,28 @@
+**/venv/
+**/.ruff_cache/
+
+# === Секреты и Ключи ===
+key.json
+*.pem
+*.pub
+*.key
+
+# === Конфигурации серверов ===
+cloud-init.yaml
+user-data.yaml
+
+# === Terraform ===
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+*.tfvars.json
+.terraform.lock.hcl
+
+# === Ansible ===
+*.retry
+
+# === Системный мусор ===
+.DS_Store
+.vscode/
+.idea/
