@@ -28,19 +28,19 @@ resource "yandex_vpc_security_group" "web-sg" {
   }
 
   ingress {
-    protocol = "HTTP"
+    protocol = "TCP"
     v4_cidr_blocks = ["198.18.235.0/24", "198.18.248.0/24"]
     port = 80
   }
 
   ingress {
-    protocol = "HTTP"
+    protocol = "TCP"
     v4_cidr_blocks = ["0.0.0.0/0"]
     port = 80
   }
 
   ingress {
-    protocol = "HTTPS"
+    protocol = "TCP"
     v4_cidr_blocks = ["0.0.0.0/0"]
     port = 443
   }

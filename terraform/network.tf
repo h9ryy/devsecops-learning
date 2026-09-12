@@ -19,7 +19,10 @@ resource "yandex_vpc_subnet" "public-subnet" {
 
 resource "yandex_vpc_address" "balancer_ip" {
   name = "alb-static-ip"
-  external_ipv4_address {}
+  
+  external_ipv4_address {
+    zone_id = var.yc_zone
+  }
 }
 
 resource "yandex_vpc_gateway" "nat-gw" {
