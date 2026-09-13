@@ -30,7 +30,7 @@ resource "yandex_compute_instance" "bastion" {
   }
 }
 
-resource "yandex_compute_instance" "web-servers" {
+resource "yandex_compute_instance" "web_servers" {
   count = 2
   name = "prod-web-${count.index + 1}"
 
