@@ -27,6 +27,7 @@ resource "yandex_compute_instance" "bastion" {
 
   metadata = {
     user-data = file("${path.module}/cloud-init.yaml")
+    serial-port-enable = "1"
   }
 }
 

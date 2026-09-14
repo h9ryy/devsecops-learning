@@ -1,0 +1,33 @@
+---
+- name: Install and configure Nginx
+  hosts: web_servers
+  become: true
+
+  tasks:
+    - name: Refreshing the apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: true
+
+    - name: Start Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Install Nginx
+      apt: 
+        name: nginx
+        state: present
+        update_cache: true
+
+    - name: Start Nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes

@@ -3,13 +3,13 @@ resource "yandex_vpc_security_group" "bastion-sg" {
 
   ingress {
     protocol = "TCP"
-    v4_cidr_blocks = ["95.24.81.133/32"]
+    v4_cidr_blocks = ["95.24.75.10/32"]
     port = 22
   }
 
   ingress {
     protocol = "ICMP"
-    v4_cidr_blocks = ["95.24.81.133/32"]
+    v4_cidr_blocks = ["95.24.75.10/32"]
   }
 
   egress {
@@ -49,4 +49,16 @@ resource "yandex_vpc_security_group" "web-sg" {
     protocol = "ANY"
     v4_cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+resource "local_file" "ansible_inventory" {
+  filename = "${path.module}/../ansible/inventory.ini"
+  content  = <<EOT
+[bastion]
+bastion_host ansible_host=${yandex_compute_instance.bastion.network_interface[0].nat_ip_address}
+
+[web_servers]
+web_server_1 ansible_host=${yandex_compute_instance.web_servers[0].network_interface[0].ip_address}
+web_server_2 ansible_host=${yandex_compute_instance.web_servers[1].network_interface[0].ip_address}
+EOT
 }
