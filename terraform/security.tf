@@ -3,13 +3,13 @@ resource "yandex_vpc_security_group" "bastion-sg" {
 
   ingress {
     protocol = "TCP"
-    v4_cidr_blocks = ["95.24.75.10/32"]
+    v4_cidr_blocks = ["95.24.75.64/32"]
     port = 22
   }
 
   ingress {
     protocol = "ICMP"
-    v4_cidr_blocks = ["95.24.75.10/32"]
+    v4_cidr_blocks = ["95.24.75.64/32"]
   }
 
   egress {
@@ -29,21 +29,9 @@ resource "yandex_vpc_security_group" "web-sg" {
 
   ingress {
     protocol = "TCP"
-    v4_cidr_blocks = ["198.18.235.0/24", "198.18.248.0/24"]
+    security_group_id = yandex_vpc_security_group.alg-sg.id
     port = 80
-  }
-
-  ingress {
-    protocol = "TCP"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-    port = 80
-  }
-
-  ingress {
-    protocol = "TCP"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-    port = 443
-  }
+  } 
 
   egress {
     protocol = "ANY"
@@ -59,6 +47,13 @@ resource "yandex_vpc_security_group" "alg-sg" {
     description = "Allow HTTP"
     v4_cidr_blocks = ["0.0.0.0/0"]
     port = 80
+  }
+
+  ingress {
+    protocol = "TCP"
+    description = "Allow HTTPS"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port = 443
   }
 
   egress {

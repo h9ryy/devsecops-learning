@@ -1,5 +1,5 @@
 resource "yandex_vpc_network" "production-net" {
-  name = "secure-network"
+  name = "secure-network-v2"
 }
 
 resource "yandex_vpc_subnet" "private-subnet" {
@@ -18,7 +18,7 @@ resource "yandex_vpc_subnet" "public-subnet" {
 }   
 
 resource "yandex_vpc_address" "balancer_ip" {
-  name = "alb-static-ip"
+  name = "alb-static-ip-v2"
   
   external_ipv4_address {
     zone_id = var.yc_zone
@@ -31,7 +31,7 @@ resource "yandex_vpc_gateway" "nat-gw" {
 }
 
 resource "yandex_vpc_route_table" "private-rt" {
-  name = "prod-private-rt"
+  name = "prod-private-rt-v2"
   network_id = yandex_vpc_network.production-net.id
   static_route {
     destination_prefix = "0.0.0.0/0"

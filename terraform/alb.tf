@@ -1,5 +1,5 @@
 resource "yandex_alb_target_group" "web-targets" {
-  name = "web-target-group"
+  name = "web-target-group-v2"
 
   dynamic "target" {
     for_each = yandex_compute_instance.web_servers
@@ -12,13 +12,13 @@ resource "yandex_alb_target_group" "web-targets" {
 }
 
 resource "yandex_alb_backend_group" "web-backend-group" {
-  name = "web-backend-group"
-
+  name = "prod-web-backend-group-v2"
+    
   http_backend {
-    name = "nginx-backend"
+    name = "http-backend"
     port = 80
     target_group_ids = [yandex_alb_target_group.web-targets.id]
-
+        
     healthcheck {
       interval = "2s"
       timeout = "1s"
@@ -29,10 +29,8 @@ resource "yandex_alb_backend_group" "web-backend-group" {
   }
 }
 
-  
-
 resource "yandex_alb_http_router" "web-router" {
-  name = "prod-web-router"
+  name = "prod-web-router-v2"
 }
 
 resource "yandex_alb_virtual_host" "web-virtual-host" {
