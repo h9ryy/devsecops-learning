@@ -20,30 +20,52 @@
         state: started
         enabled: yes
 
-#Заготовка
-#     - name: Create directory for Nginx config
-#       file: 
-#         path: /etc/nginx-docker
-#         state: directory
-#         mode: '0755'
+#- name: Deploy Web and Monitoring Zone (server 1)
 
-#     - name: Copy nginx.conf to server
-#       copy: 
-#         src: nginx-config/nginx.conf
-#         dest: /etc/nginx-docker/nginx.conf
+- name: Deploy Security Audit Zone (server 2)
+  hosts: web_servers
+  become: true
 
-#     - name: Run Nginx container
-#       community.general.docker_container:
-#         name: "nginx-proxy"
-#         image: "nginx:alpine"
-#         state: started
-#         restart_policy: always
-#         ports: [ "80:80" ]
-#         volumes: [ "/etc/nginx-docker/nginx.conf:/etc/nginx/conf.d/default.conf" ] 
+  tasks:
+    - name: Create audit folder
+      file:
+        path: /home/ubuntu/network-audit
+        state: directory
+        mode: '0755'
+        owner: ubuntu
 
-#     - name: Schedule Port Security Monitor via Cron
-#       cron:
-#         name: "run_port_security_monitor"
-#         minute: "*/50"
-#         job: "docker run --rm -v /var/log/microservices:/app/logs monitoring-image:latest -f /app/ports.txt --host 10.10.10.11"
-          
+    - name: Create reports folder
+      file:
+        path: /home/ubuntu/network-audit/reports
+        state: directory
+        mode: '0755'
+        owner: ubuntu
+
+    - name: Copy infra-guard
+      copy:
+        src: ../../python-scripts/infra-guard/
+        dest: /home/ubuntu/network-audit/infra-guard
+
+    - name: Copy config.yaml
+      template:
+        src: ../templates/config.yaml
+        dest: /home/ubuntu/network-audit/infra-guard/config.yaml
+        mode: '0644'
+
+    - name: Build Docker Image for infra-guard
+      docker_image:
+        name: infra-guard-app
+        build:
+          path: /home/ubuntu/network-audit/infra-guard
+        source: build
+
+    - name: Run infra-guard
+      docker_container:
+        name: infra-guard-launch
+        image: infra-guard-app
+        state: present
+        restart_policy: "no"
+        command: "--config /app/infra-guard/config.yaml"
+        network_mode: host
+        volumes:
+          - /home/ubuntu/network-audit/infra-guard:/app/infra-guard

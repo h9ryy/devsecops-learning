@@ -31,7 +31,7 @@ resource "yandex_vpc_security_group" "web-sg" {
     protocol = "TCP"
     security_group_id = yandex_vpc_security_group.alg-sg.id
     port = 80
-  } 
+  }
 
   egress {
     protocol = "ANY"
