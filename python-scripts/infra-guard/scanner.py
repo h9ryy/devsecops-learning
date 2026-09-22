@@ -73,7 +73,6 @@ def connect_ssh(host, port):
         return {"host": host, "output": output, "errors": errors}
     except paramiko.AuthenticationException as auth_ex:
         sys.stderr.write(f"[-] Ошибка авторизации на {host}: {auth_ex}. Проверь формат ключа!\n")
-
     except Exception as e:
         sys.stderr.write(f"[-] Ошибка подключения к {host}: {e}\n")
     finally:

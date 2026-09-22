@@ -57,6 +57,7 @@
         name: infra-guard-app
         build:
           path: /home/ubuntu/network-audit/infra-guard
+          nocache: yes
         source: build
 
     - name: Run infra-guard
