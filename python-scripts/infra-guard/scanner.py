@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import io
 import yaml
 import socket
 import paramiko
@@ -59,17 +60,20 @@ def connect_ssh(host, port):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     
-    ssh_user = os.getenv("SSH_USERNAME", "infra_guard_svc")
-    ssh_password = os.getenv("SSH_PRIVATE_KEY", "secret_pass")
+    ssh_user = os.getenv("SSH_USERNAME", "ubuntu")
+    ssh_key_env = os.getenv("SSH_PRIVATE_KEY")
     try:
-        client.connect(hostname=host, username=ssh_user, port=port, password=ssh_password, timeout=5)
+        private_key = paramiko.Ed25519Key.from_private_key(io.StringIO(ssh_key_env.replace("\\n", "\n")))
+
+        client.connect(hostname=host, username=ssh_user, port=port, pkey=private_key, timeout=5)
         stdin, stdout, stderr = client.exec_command("stat -c '%a' /etc/myapp/config.yaml 2>/dev/null || echo 'NOT_FOUND'; ss -ltupn")
         
         output = stdout.read().decode("utf-8")
         errors = stderr.read().decode("utf-8")
         return {"host": host, "output": output, "errors": errors}
-    except paramiko.AuthenticationException:
-        sys.stderr.write(f"Авторизация не удалась! Проверьте имя пользователя или пароль.")
+    except paramiko.AuthenticationException as auth_ex:
+        sys.stderr.write(f"[-] Ошибка авторизации на {host}: {auth_ex}. Проверь формат ключа!\n")
+
     except Exception as e:
         sys.stderr.write(f"[-] Ошибка подключения к {host}: {e}\n")
     finally:

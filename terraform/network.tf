@@ -15,6 +15,7 @@ resource "yandex_vpc_subnet" "public-subnet" {
   zone = var.yc_zone
   network_id = yandex_vpc_network.production-net.id
   v4_cidr_blocks = ["10.10.11.0/24"]
+  route_table_id = yandex_vpc_route_table.public-rt.id
 }   
 
 resource "yandex_vpc_address" "balancer_ip" {
@@ -37,4 +38,9 @@ resource "yandex_vpc_route_table" "private-rt" {
     destination_prefix = "0.0.0.0/0"
     gateway_id = yandex_vpc_gateway.nat-gw.id
   }
+}
+
+resource "yandex_vpc_route_table" "public-rt" {
+  name = "prod-public-rt-v2"
+  network_id = yandex_vpc_network.production-net.id
 }

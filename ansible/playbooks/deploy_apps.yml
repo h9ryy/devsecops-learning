@@ -1,6 +1,6 @@
 ---
 - name: Install and configure Docker
-  hosts: web_servers
+  hosts: bastion, web_monitoring, security_audit
   become: true
 
   tasks:
@@ -23,7 +23,7 @@
 #- name: Deploy Web and Monitoring Zone (server 1)
 
 - name: Deploy Security Audit Zone (server 2)
-  hosts: web_servers
+  hosts: security_audit
   become: true
 
   tasks:
@@ -69,3 +69,5 @@
         network_mode: host
         volumes:
           - /home/ubuntu/network-audit/infra-guard:/app/infra-guard
+        env:
+          SSH_PRIVATE_KEY: "{{ lookup('file', '~/.ssh/id_ed25519') }}"
