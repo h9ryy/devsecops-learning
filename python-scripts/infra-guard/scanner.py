@@ -1,14 +1,17 @@
 import argparse
 import os
 import sys
+import json
 import io
 import yaml
 import socket
 import paramiko
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 
 parser = argparse.ArgumentParser(description="Автоматизированный сканер периметра и аудитор безопасности инфраструктуры")
 parser.add_argument("--config", type=str, help="Путь к файлу конфигурации (config.json)")
+parser.add_argument("--output-dir", type=str, help="Путь к директории для сохранения отчетов")
 args = parser.parse_args()
 
 if not args.config:
@@ -79,6 +82,11 @@ def connect_ssh(host, port):
         client.close()
     return None
 
+final_report = {
+    "scan_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    "hosts_audited": {}
+}
+
 for host, port in result:
     if port == 22:
         report = connect_ssh(host, port)
@@ -87,14 +95,37 @@ for host, port in result:
             permissions = lines[0] if lines else "unknown"
             
             print(f" Результаты аудита для {host}:")
+            
+            host_data = {
+                "ssh_port_open": True,
+                "config_permissions": permissions,
+                "config_status": "OK",
+                "dangerous_port_8080": False
+            }
+            
             if permissions == "NOT_FOUND":
-                print("[-] Предупреждение: Конфигурационный файл /etc/myapp/config.yaml не найден.")
+                host_data["config_status"] = "NOT_FOUND"
             elif permissions != "640":
-                print(f"Небезопасные права на конфиг: {permissions} (Ожидалось 640!)")
+                host_data["config_status"] = f"INSECURE: {permissions} (Ожидалось 640!)"
             else:
-                print("Права на конфигурационный файл в порядке (640).")
-                    
+                host_data["config_status"] = "OK: Права 640"
+                
             if ":8080" in report["output"] or "8080" in report["output"]:
-                print("На сервере обнаружен запущенный процесс на порту 8080!")
+                host_data["dangerous_port_8080"] = True
             else:
-                print("Опасных открытых портов внутри системы не обнаружено.")
+                host_data["dangerous_port_8080"] = False
+                
+            final_report["hosts_audited"][host] = host_data
+
+if args.output_dir:
+    os.makedirs(args.output_dir, exist_ok=True)
+    
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    filename = f"report_{current_date}.json"
+    
+    full_path = os.path.join(args.output_dir, filename)
+    with open(full_path, "w", encoding="utf-8") as f:
+        json.dump(final_report, f, indent=4, ensure_ascii=False)
+    print(f"[+] Отчет сохранен: {full_path}")
+else:
+    print(json.dumps(final_report, indent=4, ensure_ascii=False))

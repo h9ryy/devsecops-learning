@@ -62,13 +62,22 @@
 
     - name: Run infra-guard
       docker_container:
-        name: infra-guard-launch
+        name: infra-guard-app
         image: infra-guard-app
         state: present
         restart_policy: "no"
-        command: "--config /app/infra-guard/config.yaml"
+        user: "1000:1000"
+        command: "--config /app/infra-guard/config.yaml --output-dir /app/reports"
         network_mode: host
         volumes:
           - /home/ubuntu/network-audit/infra-guard:/app/infra-guard
+          - /home/ubuntu/network-audit/reports:/app/reports
         env:
           SSH_PRIVATE_KEY: "{{ lookup('file', '~/.ssh/id_ed25519') }}"
+
+    - name: Start cron infra-guard
+      ansible.builtin.cron:
+        name: Scheduled infrared security activation
+        minute: "0"
+        hour: "3"
+        job: "docker start infra-guard-app"
