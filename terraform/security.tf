@@ -20,7 +20,7 @@ resource "yandex_vpc_security_group" "bastion-sg" {
 
   ingress {
     protocol = "ICMP"
-    v4_cidr_blocks = ["95.24.75.84/32"]
+    v4_cidr_blocks = ["${chomp(data.http.my_public_ip.response_body)}/32"]
   }
 
   egress {

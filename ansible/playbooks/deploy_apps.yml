@@ -20,8 +20,7 @@
         state: started
         enabled: yes
 
-#- name: Deploy Web and Monitoring Zone (server 1)
-
+# -------------------------------------------------------------------------------------------------------------------
 - name: Deploy Security Audit Zone (server 2)
   hosts: security_audit
   become: true
