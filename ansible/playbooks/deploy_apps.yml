@@ -51,28 +51,28 @@
         dest: /home/ubuntu/network-audit/infra-guard/config.yaml
         mode: '0644'
 
-    - name: Build Docker Image for infra-guard
-      docker_image:
-        name: infra-guard-app
-        build:
-          path: /home/ubuntu/network-audit/infra-guard
-          nocache: yes
-        source: build
+    # - name: Build Docker Image for infra-guard
+    #   docker_image:
+    #     name: infra-guard-app
+    #     build:
+    #       path: /home/ubuntu/network-audit/infra-guard
+    #       nocache: yes
+    #     source: build
 
-    - name: Run infra-guard
-      docker_container:
-        name: infra-guard-app
-        image: infra-guard-app
-        state: present
-        restart_policy: "no"
-        user: "1000:1000"
-        command: "--config /app/infra-guard/config.yaml --output-dir /app/reports"
-        network_mode: host
-        volumes:
-          - /home/ubuntu/network-audit/infra-guard:/app/infra-guard
-          - /home/ubuntu/network-audit/reports:/app/reports
-        env:
-          SSH_PRIVATE_KEY: "{{ lookup('file', '~/.ssh/id_ed25519') }}"
+    # - name: Run infra-guard
+    #   docker_container:
+    #     name: infra-guard-app
+    #     image: infra-guard-app
+    #     state: present
+    #     restart_policy: "no"
+    #     user: "1000:1000"
+    #     command: "--config /app/infra-guard/config.yaml --output-dir /app/reports"
+    #     network_mode: host
+    #     volumes:
+    #       - /home/ubuntu/network-audit/infra-guard:/app/infra-guard
+    #       - /home/ubuntu/network-audit/reports:/app/reports
+    #     env:
+    #       SSH_PRIVATE_KEY: "{{ lookup('file', '~/.ssh/id_ed25519') }}"
 
     - name: Start cron infra-guard
       ansible.builtin.cron:

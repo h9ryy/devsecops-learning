@@ -60,19 +60,19 @@ resource "yandex_vpc_security_group" "web-sg" {
 resource "yandex_vpc_security_group" "alg-sg" {
   network_id = yandex_vpc_network.production-net.id
 
-  ingress {
-    protocol = "TCP"
-    description = "Allow HTTP"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-    port = 80
-  }
+  # ingress {
+  #   protocol = "TCP"
+  #   description = "Allow HTTP"
+  #   v4_cidr_blocks = ["0.0.0.0/0"]
+  #   port = 80
+  # }
 
-  ingress {
-    protocol = "TCP"
-    description = "Allow HTTPS"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-    port = 443
-  }
+  # ingress {
+  #   protocol = "TCP"
+  #   description = "Allow HTTPS"
+  #   v4_cidr_blocks = ["0.0.0.0/0"]
+  #   port = 443
+  # }
 
   egress {
     protocol = "ANY"
