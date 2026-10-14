@@ -10,8 +10,9 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 
 parser = argparse.ArgumentParser(description="Автоматизированный сканер периметра и аудитор безопасности инфраструктуры")
-parser.add_argument("--config", type=str, help="Путь к файлу конфигурации (config.json)")
+parser.add_argument("--config", type=str, help="Путь к файлу конфигурации (config.yaml)")
 parser.add_argument("--output-dir", type=str, help="Путь к директории для сохранения отчетов")
+parser.add_argument("-w", "--workers", type=int, default=15, help="Количество потоков (по умолчанию: 15)")
 args = parser.parse_args()
 
 if not args.config:
@@ -48,7 +49,7 @@ def check_port(target, port):
         return None
 
 result = []
-with ThreadPoolExecutor(max_workers=15) as executor:
+with ThreadPoolExecutor(max_workers=args.workers) as executor:
     futures = []
     for target in targets:
         for port in ports:
